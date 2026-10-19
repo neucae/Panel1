@@ -298,49 +298,6 @@ a.box:hover, a.box:focus-visible { transform: translateY(-4px); border-color: va
   border-radius: 999px; padding: .32rem .85rem;
 }
 
-
-/* ---------- Página de entrada: buscador, chips y enlaces ---------- */
-.finder { display: flex; flex-wrap: wrap; gap: .6rem; align-items: center; }
-.finder input {
-  flex: 1 1 18rem; min-width: 0;
-  font: inherit; font-size: 1rem; color: var(--ink);
-  background: var(--surface); border: 1px solid var(--line); border-radius: 999px;
-  padding: .7rem 1.1rem;
-}
-.finder input:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
-.chips { display: flex; flex-wrap: wrap; gap: .4rem; }
-.chip {
-  font: inherit; font-size: .8125rem; font-weight: 600; cursor: pointer;
-  color: var(--ink-2); background: var(--surface); border: 1px solid var(--line);
-  border-radius: 999px; padding: .35rem .8rem;
-}
-.chip[aria-pressed="true"] { color: var(--btn-ink); background: var(--accent); border-color: var(--accent); }
-.count { font-size: .8125rem; color: var(--ink-3); }
-.empty { font-size: .9rem; color: var(--ink-2); padding: 1rem 0; }
-
-.boxes-auto { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(15.5rem, 1fr)); }
-div.box {
-  --tone: var(--accent); --tone-bg: var(--tone-her);
-  display: flex; flex-direction: column; gap: .5rem; min-width: 0;
-  background: var(--surface); border: 1px solid var(--line); border-top: 5px solid var(--tone);
-  border-radius: var(--radius); padding: 1.05rem 1.15rem 1rem; box-shadow: var(--shadow);
-}
-div.box.c-comercial, div.box.c-inicio { --tone: var(--amber); --tone-bg: var(--amber-bg); }
-div.box.c-mercado, div.box.c-contratos { --tone: var(--tone-int); --tone-bg: var(--tone-int-bg); }
-.box-links { display: flex; flex-wrap: wrap; gap: .4rem; margin-left: auto; justify-content: flex-end; }
-.lk {
-  white-space: nowrap; text-decoration: none; font-size: .78rem; font-weight: 700;
-  border-radius: 999px; padding: .3rem .75rem; border: 1px solid var(--tone);
-  color: var(--tone); background: transparent;
-}
-.lk.web { color: var(--btn-ink); background: var(--tone); }
-.lk:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-.dp {
-  align-self: flex-start; font-size: .6875rem; font-weight: 700; letter-spacing: .04em;
-  color: var(--amber); border: 1px solid var(--amber); border-radius: 999px; padding: .1rem .55rem;
-}
-.box-foot2 { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; margin-top: .35rem; padding-top: .65rem; border-top: 1px solid var(--line-soft); }
-
 /* ---------- Fichas de skill ---------- */
 
 .skills {
@@ -560,17 +517,63 @@ details > *:not(summary) { margin-top: .6rem; }
       <span class="badge">Panel interno</span>
   </header>
 
-  <section class="pad" aria-label="Buscar">
-    <div class="finder">
-      <input id="q" type="search" placeholder="Busca cualquier documento, herramienta o estudio…" aria-label="Buscar en el panel">
-      <span class="count" id="count">35 documentos</span>
+  <section class="pad">
+    <div class="sect"><h2>Material comercial</h2>
+      <span class="tag">3 dossieres · en el navegador</span></div>
+    <div class="boxes boxes-3">
+      <a class="box mat" href="https://claude.ai/code/artifact/c769ebee-058a-4bd8-ad3e-385303183ca2">
+        <span class="box-top"><span class="box-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3c3 4 6 7.5 6 11a6 6 0 0 1-12 0c0-3.5 3-7 6-11z"/></svg></span><span class="box-kicker">Para flotas</span></span>
+        <span class="box-name">El dinero que su flota quema en los neumáticos</span>
+        <span class="box-desc">Ahorro de combustible con neumáticos de clase A, con las 11 fuentes enlazadas.</span>
+        <span class="box-foot"><span class="box-meta">5 páginas</span><span class="box-btn">Abrir →</span></span>
+      </a>
+      <a class="box mat" href="https://claude.ai/artifact/8L69DepduKCuBbSMv8xdBG">
+        <span class="box-top"><span class="box-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="3.5"/><path d="M12 3.5v5M12 15.5v5M3.5 12h5M15.5 12h5"/></svg></span><span class="box-kicker">Para taller y flota</span></span>
+        <span class="box-name">Los neumáticos eficientes duran más</span>
+        <span class="box-desc">Por qué la clase A y B aguanta más kilómetros. Casos verificados en turismo, furgoneta, autobús y camión.</span>
+        <span class="box-foot"><span class="box-meta">5 páginas</span><span class="box-btn">Abrir →</span></span>
+      </a>
+      <a class="box int" href="https://claude.ai/artifact/7MjsZSyymhyA5onDdkci7G">
+        <span class="box-top"><span class="box-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V4"/><path d="M4 20h16"/><path d="M8 16v-5M12 16V8M16 16v-8"/></svg></span><span class="box-kicker">Interno</span></span>
+        <span class="box-name">Mercado del neumático y potencial CAE</span>
+        <span class="box-desc">24,6 M de neumáticos al año, cuántos pasan por cada taller, valor CAE y prioridades comerciales.</span>
+        <span class="box-foot"><span class="box-meta">7 páginas · 19 oct</span><span class="box-btn">Abrir →</span></span>
+      </a>
     </div>
-    <div class="chips" id="chips" role="group" aria-label="Filtrar por área"></div>
   </section>
 
-  <div id="secciones"></div>
+  <section class="pad">
+    <div class="sect"><h2>Herramientas</h2>
+      <span class="tag">4 herramientas · en el navegador</span></div>
+    <div class="boxes boxes-4">
+      <a class="box her" href="https://claude.ai/code/artifact/b5546858-8b05-49c6-9d4c-9afb3f1c69a5">
+        <span class="box-top"><span class="box-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8"/><path d="M8 11h2M12 11h2M8 15h2M12 15h2M8 18h2M12 18h2"/></svg></span><span class="box-kicker">Calculadora</span></span>
+        <span class="box-name">Calculadora comercial CAE</span>
+        <span class="box-desc">Lo que ve el cliente en el taller: cuánto vale su cambio de neumáticos.</span>
+        <span class="box-foot"><span class="box-meta">1 ago 2026</span><span class="box-btn">Abrir →</span></span>
+      </a>
+      <a class="box her" href="https://claude.ai/code/artifact/32b781d8-c195-4f01-9daa-dcdc5c0b10fa">
+        <span class="box-top"><span class="box-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="5" cy="6" r="1"/><circle cx="5" cy="12" r="1"/><circle cx="5" cy="18" r="1"/></svg></span><span class="box-kicker">Catálogo</span></span>
+        <span class="box-name">Catálogo de neumáticos A/B</span>
+        <span class="box-desc">525 filas auditadas, con filtro por clase, medida y tipo de vehículo.</span>
+        <span class="box-foot"><span class="box-meta">1 ago 2026</span><span class="box-btn">Abrir →</span></span>
+      </a>
+      <a class="box her" href="https://claude.ai/code/artifact/8812cabb-dad2-464a-bf36-d04f06718e20">
+        <span class="box-top"><span class="box-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M3.5 20a5.5 5.5 0 0 1 11 0"/><circle cx="17" cy="9" r="2.5"/><path d="M15.5 14.2A4.5 4.5 0 0 1 21 18.5"/></svg></span><span class="box-kicker">Leads</span></span>
+        <span class="box-name">Leads: flotas y talleres</span>
+        <span class="box-desc">Cantera de contactos en 7 comunidades, filtrable por tamaño y veracidad.</span>
+        <span class="box-foot"><span class="box-meta">1 ago 2026</span><span class="box-btn">Abrir →</span></span>
+      </a>
+      <a class="box her" href="https://claude.ai/artifact/4EVj1MG9UeeMk8wBcBy817">
+        <span class="box-top"><span class="box-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h11v9H3z"/><path d="M14 10h4l3 3v3h-7"/><circle cx="7" cy="17.5" r="1.8"/><circle cx="17" cy="17.5" r="1.8"/></svg></span><span class="box-kicker">Distribuidores</span></span>
+        <span class="box-name">Distribuidores de neumáticos</span>
+        <span class="box-desc">Los 10 mayores mayoristas de España, ordenados por quién controla el punto de montaje. 43 contactos nominales.</span>
+        <span class="box-foot"><span class="box-meta">23 sep 2026</span><span class="box-btn">Abrir →</span></span>
+      </a>
+    </div>
+  </section>
 
-  <section class="pad" data-seccion="skills">
+  <section class="pad">
     <div class="sect"><h2>Skills</h2>
       <span class="tag">2 · se piden en lenguaje normal</span></div>
 
@@ -643,12 +646,12 @@ details > *:not(summary) { margin-top: .6rem; }
     </div>
   </section>
 
-
   <div class="pad">
     <div class="foot">
-      <p><b>Cómo se abre cada cosa.</b> «Ver web» y «Abrir» llevan a la versión web publicada, que se ve bien en el móvil. «PDF», «Documento», «Script» y «Carpeta» abren el fichero en GitHub. El repositorio es privado, así que solo lo ve el equipo NEUCAE con su usuario de GitHub. Para mandar algo a un cliente, usa el PDF.</p>
-      <p><b>Datos personales:</b> los recuadros marcados contienen nombres, teléfonos o emails de personas. No los reenvíes fuera del equipo.</p>
-      <p><b>Las skills</b> se usan desde Claude Code dentro del repositorio de NEUCAE: basta con pedir lo que aparece en su recuadro.</p>
+      <p><b>El material comercial:</b> los dos primeros dossieres son para clientes. Para mandarlos a un cliente usa los PDF de <code>Dámaso carpeta/MATERIAL-COMERCIAL-AHORRO-COMBUSTIBLE/</code> y <code>Dámaso carpeta/MATERIAL-COMERCIAL-DURABILIDAD/</code>; los enlaces de arriba son esos mismos documentos en web, para consultarlos desde el móvil o enseñarlos en una reunión. El de combustible argumenta el ahorro en el surtidor y el de durabilidad, los kilómetros de más. Antes de enviarlos hay que ponerles teléfono y email en la última página.</p>
+      <p><b>El dossier de mercado</b> es interno, no se envía a clientes: recoge el tamaño del mercado, los neumáticos por taller, el valor CAE y el orden de prioridades comerciales. Su PDF está en <code>comercial/dossier-mercado-neumatico-2026/</code>.</p>
+      <p>Las skills no necesitan ningún comando: basta con pedirle a Claude lo que aparece arriba dentro del repo <code>neucae-ia-business-development</code>. Para añadir una nueva se crea su carpeta en <code>.claude/skills/</code> y luego se pide «actualiza el panel de herramientas».</p>
+      <p>Anticresis Mayores y dropshipping tienen su propio panel: <a href="https://claude.ai/code/artifact/73fcfe5e-9687-448e-9a94-a8284cf8723b">abrir →</a></p>
     </div>
   </div>
 
@@ -672,68 +675,6 @@ details > *:not(summary) { margin-top: .6rem; }
       });
     });
   });
-</script>
-
-<script>
-  var DOCS = [{"c": "inicio", "t": "Cómo se genera el ahorro (TRA010)", "d": "Qué se certifica al cambiar neumáticos y cómo se calcula.", "f": "mar 2026", "l": [{"label": "Documento", "url": "https://github.com/neucae/neucae-ia-business-development/blob/damaso/ficha_TRA010/TRA010_como_se_genera_el_ahorro.md", "kind": "gh"}], "p": false}, {"c": "inicio", "t": "Preguntas frecuentes", "d": "Las dudas habituales de talleres y clientes sobre neumáticos y CAE.", "f": "mar 2026", "l": [{"label": "Documento", "url": "https://github.com/neucae/neucae-ia-business-development/blob/damaso/faqs.md", "kind": "gh"}], "p": false}, {"c": "inicio", "t": "Anexos oficiales de la TRA010", "d": "Coeficientes por salto de clase y kilómetros oficiales por tipo de vehículo.", "f": "—", "l": [{"label": "Anexo II", "url": "https://github.com/neucae/neucae-ia-business-development/blob/damaso/ficha_TRA010/TRA010_Anexo_II.md", "kind": "gh"}, {"label": "Anexo III", "url": "https://github.com/neucae/neucae-ia-business-development/blob/damaso/ficha_TRA010/TRA010_Anexo_III.md", "kind": "gh"}], "p": false}, {"c": "comercial", "t": "El dinero que su flota quema en los neumáticos", "d": "Ahorro de combustible con neumáticos de clase A, con las fuentes enlazadas. Para flotas.", "f": "ago 2026", "l": [{"label": "Ver web", "url": "https://claude.ai/code/artifact/c769ebee-058a-4bd8-ad3e-385303183ca2", "kind": "web"}, {"label": "PDF", "url": "https://github.com/neucae/neucae-ia-business-development/blob/damaso/D%C3%A1maso%20carpeta/MATERIAL-COMERCIAL-AHORRO-COMBUSTIBLE/NEUCAE-Ahorro-combustible-neumaticos-clase-A.pdf", "kind": "gh"}], "p": false}, {"c": "comercial", "t": "Los neumáticos eficientes duran más", "d": "Por qué la clase A y B aguanta más kilómetros: turismo, furgoneta, autobús y camión.", "f": "sep 2026", "l": [{"label": "Ver web", "url": "https://claude.ai/artifact/8L69DepduKCuBbSMv8xdBG", "kind": "web"}, {"label": "PDF", "url": "https://github.com/neucae/neucae-ia-business-development/blob/damaso/D%C3%A1maso%20carpeta/MATERIAL-COMERCIAL-DURABILIDAD/NEUCAE-Etiqueta-A-neumaticos-duran-mas.pdf", "kind": "gh"}], "p": false}, {"c": "comercial", "t": "La presión ya la vigila. La otra mitad, no", "d": "Del control de la presión al neumático de clase A. Para cliente o partner.", "f": "ago 2026", "l": [{"label": "PDF", "url": "https://github.com/neucae/neucae-ia-business-development/blob/damaso/D%C3%A1maso%20carpeta/MATERIAL-COMERCIAL-PRESION-NEUMATICOS/NEUCAE-Presion-neumaticos-puente-clase-A.pdf", "kind": "gh"}], "p": false}, {"c": "comercial", "t": "Argumentario comercial de neumáticos", "d": "Guion y frases para comerciales. Uso interno, no entregar al cliente.", "f": "ago 2026", "l": [{"label": "PDF", "url": "https://github.com/neucae/neucae-ia-business-development/blob/damaso/D%C3%A1maso%20carpeta/MATERIAL-COMERCIAL-PRESION-NEUMATICOS/NEUCAE-Argumentario-comercial-neumaticos.pdf", "kind": "gh"}, {"label": "Guion de llamada", "url": "https://github.com/neucae/neucae-ia-business-development/blob/damaso/D%C3%A1maso%20carpeta/MATERIAL-COMERCIAL-PRESION-NEUMATICOS/argumentario-presion-flotas.md", "kind": "gh"}], "p": false}, {"c": "comercial", "t": "Argumentario para talleres", "d": "Cómo presentar NEUCAE a un taller.", "f": "2026", "l": [{"label": "Documento", "url": "https://github.com/neucae/neucae-ia-business-development/blob/damaso/D%C3%A1maso%20carpeta/Estrategias/argumentario-talleres.md", "kind": "gh"}], "p": false}, {"c": "comercial", "t": "Argumentario para sujetos delegados y obligados", "d": "Cómo presentar NEUCAE a quien compra los CAE.", "f": "2026", "l": [{"label": "Documento", "url": "https://github.com/neucae/neucae-ia-business-development/blob/damaso/D%C3%A1maso%20carpeta/Estrategias/argumentario-SD-SO.md", "kind": "gh"}], "p": false}, {"c": "comercial", "t": "Deck para talleres", "d": "Guion de la presentación para talleres.", "f": "2026", "l": [{"label": "Documento", "url": "https://github.com/neucae/neucae-ia-business-development/blob/damaso/D%C3%A1maso%20carpeta/Estrategias/deck-talleres-neucae.md", "kind": "gh"}], "p": false}, {"c": "comercial", "t": "Deck para SD y SO", "d": "Guion de la presentación para sujetos delegados y obligados.", "f": "2026", "l": [{"label": "Documento", "url": "https://github.com/neucae/neucae-ia-business-development/blob/damaso/D%C3%A1maso%20carpeta/deck%20SD-SO.md", "kind": "gh"}], "p": false}, {"c": "comercial", "t": "Propuesta para taller pequeño", "d": "Propuesta comercial para el taller de barrio.", "f": "mar 2026", "l": [{"label": "Documento", "url": "https://github.com/neucae/neucae-ia-business-development/blob/damaso/11-comercial-detallado-taller-peque%C3%B1o.md", "kind": "gh"}], "p": false}, {"c": "herramientas", "t": "Calculadora comercial CAE", "d": "Lo que ve el cliente en el taller: cuánto vale su cambio de neumáticos.", "f": "ago 2026", "l": [{"label": "Abrir", "url": "https://claude.ai/code/artifact/b5546858-8b05-49c6-9d4c-9afb3f1c69a5", "kind": "web"}, {"label": "Guía", "url": "https://github.com/neucae/neucae-ia-business-development/blob/damaso/D%C3%A1maso%20carpeta/NUEVA-CALCULADORA-COMERCIAL/README.md", "kind": "gh"}], "p": false}, {"c": "herramientas", "t": "Catálogo de neumáticos A/B", "d": "Neumáticos de clase A y B con filtro por clase, medida y tipo de vehículo.", "f": "ago 2026", "l": [{"label": "Abrir", "url": "https://claude.ai/code/artifact/32b781d8-c195-4f01-9daa-dcdc5c0b10fa", "kind": "web"}], "p": false}, {"c": "herramientas", "t": "Calculadora TRA010 (Google Sheets)", "d": "Ahorro certificable y valor del CAE de cada operación.", "f": "jun 2026", "l": [{"label": "Script", "url": "https://github.com/neucae/neucae-ia-business-development/blob/damaso/D%C3%A1maso%20carpeta/calculadora-neucae-v3-sheets.js", "kind": "gh"}], "p": false}, {"c": "herramientas", "t": "Propuesta personalizada (Google Sheets)", "d": "Genera la propuesta para un cliente a partir de la calculadora.", "f": "abr 2026", "l": [{"label": "Script", "url": "https://github.com/neucae/neucae-ia-business-development/blob/damaso/D%C3%A1maso%20carpeta/propuesta-personalizada-sheets.js", "kind": "gh"}], "p": false}, {"c": "herramientas", "t": "Plantilla de presentaciones y marca", "d": "Base para presentaciones y manual de identidad de NEUCAE.", "f": "2026", "l": [{"label": "Carpeta", "url": "https://github.com/neucae/neucae-ia-business-development/tree/damaso/slidev", "kind": "gh"}, {"label": "Marca", "url": "https://github.com/neucae/neucae-ia-business-development/blob/damaso/slidev/BRAND.md", "kind": "gh"}], "p": false}, {"c": "prospeccion", "t": "Leads: flotas y talleres", "d": "Visor de organizaciones en 7 comunidades, filtrable por tamaño y veracidad.", "f": "ago 2026", "l": [{"label": "Abrir", "url": "https://claude.ai/code/artifact/8812cabb-dad2-464a-bf36-d04f06718e20", "kind": "web"}], "p": true}, {"c": "prospeccion", "t": "Distribuidores de neumáticos", "d": "Los mayores mayoristas de España, con sus contactos.", "f": "sep 2026", "l": [{"label": "Abrir", "url": "https://claude.ai/artifact/4EVj1MG9UeeMk8wBcBy817", "kind": "web"}], "p": true}, {"c": "prospeccion", "t": "Cómo llegar a los talleres", "d": "Canales, grupos y asociaciones para entrar en talleres.", "f": "mar 2026", "l": [{"label": "Documento", "url": "https://github.com/neucae/neucae-ia-business-development/blob/damaso/08-contacto-talleres-espana.md", "kind": "gh"}], "p": false}, {"c": "prospeccion", "t": "Listado de talleres", "d": "Cadenas y autocentros con sus contactos.", "f": "jul 2026", "l": [{"label": "Documento", "url": "https://github.com/neucae/neucae-ia-business-development/blob/damaso/22-listado-accionable-talleres-espana.md", "kind": "gh"}], "p": true}, {"c": "prospeccion", "t": "Listado de flotas", "d": "Flotas de VTC, camiones y renting con sus contactos.", "f": "jul 2026", "l": [{"label": "Documento", "url": "https://github.com/neucae/neucae-ia-business-development/blob/damaso/21-contacto-flotas-vtc-camiones-espana.md", "kind": "gh"}], "p": true}, {"c": "mercado", "t": "Mercado del neumático y potencial CAE", "d": "24,6 M de neumáticos al año, cuántos pasan por cada taller y el valor CAE.", "f": "oct 2026", "l": [{"label": "Ver web", "url": "https://claude.ai/artifact/7MjsZSyymhyA5onDdkci7G", "kind": "web"}, {"label": "PDF", "url": "https://github.com/neucae/neucae-ia-business-development/blob/damaso/comercial/dossier-mercado-neumatico-2026/NEUCAE-Mercado-neumatico-y-potencial-CAE-2026.pdf", "kind": "gh"}], "p": false}, {"c": "mercado", "t": "Sujetos obligados", "d": "Quiénes tienen que comprar CAE y cuánto ahorro deben aportar.", "f": "2026", "l": [{"label": "Documento", "url": "https://github.com/neucae/neucae-ia-business-development/blob/damaso/comercial/sujetos_obligados.md", "kind": "gh"}], "p": true}, {"c": "mercado", "t": "Sujetos delegados", "d": "Los sujetos delegados acreditados que agregan y venden CAE.", "f": "jul 2026", "l": [{"label": "Documento", "url": "https://github.com/neucae/neucae-ia-business-development/blob/damaso/comercial/sujetos_delegados.md", "kind": "gh"}], "p": true}, {"c": "operaciones", "t": "Proceso de tramitación CAE", "d": "El flujo completo, del cambio de neumáticos a la venta del CAE.", "f": "abr 2026", "l": [{"label": "Documento", "url": "https://github.com/neucae/neucae-ia-business-development/blob/damaso/19-proceso-tramitacion-cae-sd-so.md", "kind": "gh"}], "p": false}, {"c": "operaciones", "t": "Alta de talleres", "d": "Cómo se da de alta y se pone en marcha un taller.", "f": "may 2026", "l": [{"label": "Documento", "url": "https://github.com/neucae/neucae-ia-business-development/blob/damaso/20-implementacion-talleres.md", "kind": "gh"}], "p": false}, {"c": "operaciones", "t": "Cumplimentar la ficha TRA010", "d": "Qué datos hay que recoger y cómo se rellena la ficha.", "f": "mar 2026", "l": [{"label": "Documento", "url": "https://github.com/neucae/neucae-ia-business-development/blob/damaso/13-cumplimentar-ficha-ahorro.md", "kind": "gh"}], "p": false}, {"c": "operaciones", "t": "Venta en el taller y canje del CAE", "d": "El proceso con el cliente delante, paso a paso.", "f": "mar 2026", "l": [{"label": "Documento", "url": "https://github.com/neucae/neucae-ia-business-development/blob/damaso/12-proceso-venta-insitu-canjeo.md", "kind": "gh"}], "p": false}, {"c": "contratos", "t": "Contrato de cesión: particulares", "d": "El que firma el cliente particular al ceder su ahorro.", "f": "2026", "l": [{"label": "Documento", "url": "https://github.com/neucae/neucae-ia-business-development/blob/damaso/contratos/modelo-contrato-cliente-particular.md", "kind": "gh"}], "p": false}, {"c": "contratos", "t": "Contrato de cesión: empresas y flotas", "d": "El que firma el cliente empresa.", "f": "2026", "l": [{"label": "Documento", "url": "https://github.com/neucae/neucae-ia-business-development/blob/damaso/contratos/modelo-contrato-cliente-empresario.md", "kind": "gh"}], "p": false}, {"c": "contratos", "t": "Contrato con el taller asociado", "d": "La colaboración entre el taller y NEUCAE.", "f": "2026", "l": [{"label": "Documento", "url": "https://github.com/neucae/neucae-ia-business-development/blob/damaso/contratos/contrato-taller-asociado-y-neucae.md", "kind": "gh"}], "p": false}, {"c": "tecnico", "t": "Arquitectura y modelo de datos", "d": "Diseño técnico de la plataforma.", "f": "mar 2026", "l": [{"label": "Documento", "url": "https://github.com/neucae/neucae-ia-business-development/blob/damaso/03-arquitectura-modelo-datos.md", "kind": "gh"}], "p": false}, {"c": "tecnico", "t": "Contexto de desarrollo de la app", "d": "Stack técnico y alcance del desarrollo.", "f": "mar 2026", "l": [{"label": "Documento", "url": "https://github.com/neucae/neucae-ia-business-development/blob/damaso/15-contexto-desarrollo-app.md", "kind": "gh"}], "p": false}, {"c": "tecnico", "t": "Hoja de propuesta en la plataforma", "d": "Maqueta de referencia y especificación del componente.", "f": "ago 2026", "l": [{"label": "Especificación", "url": "https://github.com/neucae/neucae-ia-business-development/blob/damaso/D%C3%A1maso%20carpeta/NUEVA-CALCULADORA-COMERCIAL/componente-propuesta/ENCARGO-GON.md", "kind": "gh"}], "p": false}];
-  var CATS = [{"id": "inicio", "n": "Empieza aquí", "s": "Qué es un CAE y cómo funciona la ficha TRA010"}, {"id": "comercial", "n": "Material comercial", "s": "Dossieres para el cliente, argumentarios y decks"}, {"id": "herramientas", "n": "Herramientas", "s": "Calculadoras y catálogo de neumáticos"}, {"id": "prospeccion", "n": "Prospección", "s": "Leads de talleres, flotas y distribuidores"}, {"id": "mercado", "n": "Mercado", "s": "Tamaño del mercado y quién compra los CAE"}, {"id": "operaciones", "n": "Operaciones", "s": "Del cambio de neumáticos al CAE certificado"}, {"id": "contratos", "n": "Contratos para clientes", "s": "Modelos que firma el cliente o el taller"}, {"id": "tecnico", "n": "Equipo técnico", "s": "Arquitectura y desarrollo de la plataforma"}];
-  var filtro = "todas";
-  var cont = document.getElementById("secciones");
-  var input = document.getElementById("q");
-  var chips = document.getElementById("chips");
-  var count = document.getElementById("count");
-
-  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return {"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]; }); }
-  function norm(s) { return String(s).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""); }
-
-  function chip(id, nombre) {
-    var b = document.createElement("button");
-    b.type = "button"; b.className = "chip"; b.textContent = nombre;
-    b.setAttribute("aria-pressed", id === filtro ? "true" : "false");
-    b.addEventListener("click", function () { filtro = id; pintarChips(); pintar(); });
-    return b;
-  }
-  function pintarChips() {
-    chips.innerHTML = "";
-    chips.appendChild(chip("todas", "Todo"));
-    CATS.forEach(function (c) { chips.appendChild(chip(c.id, c.n)); });
-    chips.appendChild(chip("skills", "Skills"));
-  }
-
-  function caja(d) {
-    var links = d.l.map(function (l) {
-      return '<a class="lk ' + (l.kind === "web" ? "web" : "") + '" href="' + esc(l.url) + '" target="_blank" rel="noopener">' + esc(l.label) + (l.kind === "web" ? " →" : "") + "</a>";
-    }).join("");
-    return '<div class="box c-' + d.c + '">' +
-      (d.p ? '<span class="dp">Datos personales</span>' : "") +
-      '<span class="box-name">' + esc(d.t) + "</span>" +
-      '<span class="box-desc">' + esc(d.d) + "</span>" +
-      '<span class="box-foot2"><span class="box-meta">' + esc(d.f) + '</span><span class="box-links">' + links + "</span></span></div>";
-  }
-
-  function pintar() {
-    var q = norm(input.value.trim());
-    var html = "", n = 0;
-    CATS.forEach(function (c) {
-      if (filtro !== "todas" && filtro !== c.id) return;
-      var items = DOCS.filter(function (d) {
-        return d.c === c.id && (!q || norm(d.t + " " + d.d).indexOf(q) !== -1);
-      });
-      if (!items.length) return;
-      n += items.length;
-      html += '<section class="pad"><div class="sect"><h2>' + esc(c.n) + '</h2><span class="tag">' + esc(c.s) + " · " + items.length + "</span></div>" +
-        '<div class="boxes-auto">' + items.map(caja).join("") + "</div></section>";
-    });
-    if (!html && filtro !== "skills") html = '<div class="pad"><p class="empty">No hay ningún documento con «' + esc(input.value) + '». Prueba con otra palabra.</p></div>';
-    cont.innerHTML = html;
-    var sk = document.querySelector('[data-seccion="skills"]');
-    if (sk) sk.hidden = !(filtro === "todas" || filtro === "skills") || (q && filtro !== "skills");
-    count.textContent = n + (n === 1 ? " documento" : " documentos");
-  }
-
-  input.addEventListener("input", pintar);
-  pintarChips();
-  pintar();
 </script>
 
 </body>
