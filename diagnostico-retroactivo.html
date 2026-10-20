@@ -1,0 +1,407 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Diagnóstico retroactivo NEUCAE</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+:root{
+  --bg:#f6f7fb; --card:#ffffff; --ink:#111827; --muted:#5b6275; --line:#e3e6ee;
+  --navy:#1E2238; --green:#16A34A; --green-bg:#e8f6ed; --amber:#B45309; --amber-bg:#fdf3e2;
+  --red:#B91C1C; --red-bg:#fbeaea; --accent:#F68628; --chip:#eef0f6;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#11131f; --card:#1b1e2e; --ink:#eef0f6; --muted:#a4a9bb; --line:#2c3047;
+    --navy:#c9cdf0; --green:#3DDC84; --green-bg:#16301f; --amber:#F6B35A; --amber-bg:#33270f;
+    --red:#F28B82; --red-bg:#3a1a1a; --chip:#252a40;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#11131f; --card:#1b1e2e; --ink:#eef0f6; --muted:#a4a9bb; --line:#2c3047;
+  --navy:#c9cdf0; --green:#3DDC84; --green-bg:#16301f; --amber:#F6B35A; --amber-bg:#33270f;
+  --red:#F28B82; --red-bg:#3a1a1a; --chip:#252a40;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.bar{height:5px;background:linear-gradient(90deg,#1E2238 0 40%,#F68628 40% 60%,#16A34A 60%)}
+main{max-width:1180px;margin:0 auto;padding:20px 16px 60px}
+h1{font-size:1.55rem;margin:.2em 0;color:var(--navy)}
+h2{font-size:1.1rem;margin:0 0 .6em;color:var(--navy)}
+p.lead{color:var(--muted);margin:.2em 0 1.2em;max-width:820px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;margin:0 0 16px}
+.grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+label{display:block;font-size:.83rem;color:var(--muted);margin-bottom:4px}
+input,select{width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);font:inherit}
+.btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+button,.btn{appearance:none;border:1px solid var(--line);background:var(--chip);color:var(--ink);padding:9px 14px;border-radius:10px;font:inherit;cursor:pointer}
+button.primary{background:#16A34A;border-color:#16A34A;color:#fff;font-weight:600}
+.drop{border:2px dashed var(--line);border-radius:14px;padding:22px;text-align:center;color:var(--muted)}
+.drop.over{border-color:#16A34A;color:var(--ink)}
+.kpis{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(190px,1fr))}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
+.kpi .v{font-size:1.5rem;font-weight:700;font-variant-numeric:tabular-nums}
+.kpi .l{font-size:.82rem;color:var(--muted)}
+.kpi.good .v{color:var(--green)} .kpi.warn .v{color:var(--amber)} .kpi.bad .v{color:var(--red)}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px}
+table{border-collapse:collapse;width:100%;font-size:.85rem;font-variant-numeric:tabular-nums}
+th,td{padding:7px 9px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}
+th{background:var(--chip);position:sticky;top:0}
+td.num,th.num{text-align:right}
+.tag{display:inline-block;padding:1px 8px;border-radius:999px;font-size:.75rem;font-weight:600}
+.t-ok{background:var(--green-bg);color:var(--green)} .t-dud{background:var(--amber-bg);color:var(--amber)} .t-exc{background:var(--red-bg);color:var(--red)}
+.motivo{white-space:normal;min-width:260px;color:var(--muted)}
+.note{font-size:.82rem;color:var(--muted)}
+details summary{cursor:pointer;font-weight:600;color:var(--navy)}
+code{background:var(--chip);padding:1px 5px;border-radius:6px}
+.err{color:var(--red);font-weight:600}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<div class="bar"></div>
+<main>
+  <p class="note"><a href="./">← Volver al panel</a></p>
+  <h1>Diagnóstico retroactivo de neumáticos</h1>
+  <p class="lead">Sube el histórico de cambios de neumáticos de la flota y calcula cuántos MWh se pueden certificar con la ficha TRA010. El cálculo agrupa por año y por comunidad autónoma, comprueba el mínimo de 30 MWh por expediente y avisa de lo que caduca antes. <strong>Los datos no salen de este navegador.</strong></p>
+
+  <section class="card">
+    <h2>1. Parámetros</h2>
+    <div class="grid">
+      <div><label for="ccaa">Comunidad autónoma del propietario del ahorro (si la fila no la trae)</label>
+        <select id="ccaa"></select></div>
+      <div><label for="precio">Valor del CAE (€/MWh)</label><input id="precio" type="number" step="1" value="160"></div>
+      <div><label for="pago">Pago a la flota (€/MWh)</label><input id="pago" type="number" step="1" value="75"></div>
+      <div><label for="hoy">Fecha del diagnóstico</label><input id="hoy" type="date"></div>
+      <div><label for="margen">Margen de tramitación (meses)</label><input id="margen" type="number" step="1" value="6" min="0"></div>
+      <div><label for="convertir">Clase antigua (Reglamento 1222/2009)</label>
+        <select id="convertir"><option value="si" selected>Convertir a la escala 2020/740 (prudente)</option><option value="no">Usar tal cual</option></select></div>
+    </div>
+    <p class="note">El valor del CAE y el pago a la flota se pueden editar. 160 €/MWh es el precio de referencia de NEUCAE (editable); 75 €/MWh es el reparto fijo para flotas de la calculadora comercial (pendiente de aprobar). El margen de tramitación sirve para marcar como urgentes los montajes cuyo CAE caduca antes de ese plazo.</p>
+  </section>
+
+  <section class="card">
+    <h2>2. Histórico de la flota</h2>
+    <div id="drop" class="drop">Arrastra aquí el CSV o Excel, o
+      <label class="btn" style="display:inline-block;margin:0 4px">elige un archivo<input id="file" type="file" accept=".csv,.xlsx,.xls" class="hidden"></label></div>
+    <div class="btns">
+      <button id="btnEjemplo">Cargar datos de ejemplo</button>
+      <button id="btnPlantilla">Descargar plantilla CSV</button>
+      <button id="btnCsv" class="hidden">Descargar resultado CSV</button>
+    </div>
+    <p id="msg" class="note"></p>
+    <details><summary>Columnas que entiende la herramienta</summary>
+      <div class="tablewrap" style="margin-top:8px"><table>
+        <tr><th>Columna</th><th>¿Obligatoria?</th><th>Valores</th></tr>
+        <tr><td><code>fecha_montaje</code></td><td>Sí</td><td>dd/mm/aaaa o aaaa-mm-dd</td></tr>
+        <tr><td><code>matricula</code></td><td>Sí</td><td>Texto</td></tr>
+        <tr><td><code>tipo_vehiculo</code></td><td>Sí</td><td>turismo · furgoneta · camion · autobus · semirremolque · remolque · moto · ciclomotor</td></tr>
+        <tr><td><code>n_neumaticos</code></td><td>Sí</td><td>Neumáticos cambiados en ese montaje</td></tr>
+        <tr><td><code>clase_retirado</code></td><td>Sí</td><td>A–G (la del neumático que se quitó)</td></tr>
+        <tr><td><code>clase_montado</code></td><td>Sí</td><td>A–E (la del neumático que se puso)</td></tr>
+        <tr><td><code>escala_retirado</code></td><td>No</td><td><code>2020/740</code> (por defecto) o <code>1222/2009</code> si la etiqueta es anterior a mayo de 2021</td></tr>
+        <tr><td><code>categoria_neumatico</code></td><td>No</td><td>C1 / C2 / C3. Si falta: turismo C1, furgoneta C2, camión y autobús C3</td></tr>
+        <tr><td><code>recauchutado</code></td><td>No</td><td>si / no</td></tr>
+        <tr><td><code>contrato_publico</code></td><td>No</td><td>si / no (vehículo de un contrato público o una concesión)</td></tr>
+        <tr><td><code>comunidad</code></td><td>No</td><td>Si falta, se usa la del parámetro</td></tr>
+      </table></div>
+      <p class="note">Para sacar la clase a partir de marca, modelo y medida: <code>python eprel-clase.py entrada.csv salida.csv</code> (lo tiene el equipo técnico).</p>
+    </details>
+  </section>
+
+  <section id="res" class="hidden">
+    <div class="kpis" id="kpis"></div>
+    <section class="card" style="margin-top:16px">
+      <h2>3. Expedientes por año y comunidad autónoma</h2>
+      <p class="note">Solo se pueden agrupar en una misma solicitud los montajes del mismo año y de la misma comunidad autónoma (RD 36/2023, art. 12.2), con un mínimo de 30 MWh (Orden TED/815/2023, art. 14.6).</p>
+      <div class="tablewrap"><table id="tExp"></table></div>
+    </section>
+    <section class="card">
+      <h2>4. Detalle por montaje</h2>
+      <div class="btns" style="margin:0 0 10px">
+        <select id="filtro" style="width:auto"><option value="">Todos</option><option>VÁLIDO</option><option>DUDOSO</option><option>EXCLUIDO</option></select>
+      </div>
+      <div class="tablewrap" style="max-height:520px"><table id="tDet"></table></div>
+    </section>
+  </section>
+
+  <section class="card">
+    <details><summary>Reglas del cálculo y fuentes</summary>
+      <ul class="note">
+        <li><strong>Ahorro = An × N × km</strong>, de un solo año (Di = 1). An sale del Anexo II de la ficha TRA010 y km del Anexo III (turismo 13.073 · furgoneta 15.815 · camión 53.508 · autobús 46.607). Ficha TRA010 V1.0, <a href="https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-14816">BOE-A-2024-14816</a>.</li>
+        <li><strong>Caducidad:</strong> el CAE vence 3 años después del montaje, y nunca más tarde del 01/01/2031 (Orden TED/815/2023, art. 17.1; RD 36/2023, art. 11.5).</li>
+        <li><strong>Excluido:</strong> montajes anteriores al 26/01/2023; CAE ya caducado; recauchutados (no tienen etiqueta 2020/740); motos y ciclomotores (sus neumáticos no tienen etiqueta); contratos públicos y concesiones (ficha TRA010, apartado 1); montajes sin mejora de clase.</li>
+        <li><strong>Dudoso, pendiente de confirmar con el sujeto delegado y su verificadora:</strong> montajes anteriores al 18/07/2024, cuando la ficha aún no existía; semirremolques y remolques, porque la ficha habla de «vehículos a motor»; montajes que caducan dentro del margen de tramitación.</li>
+        <li><strong>Aviso:</strong> la misma matrícula tiene otro montaje a menos de 4 años. La medida tiene que seguir activa (Orden, art. 14.9.j), así que conviene confirmar con la verificadora.</li>
+        <li><strong>Escala antigua:</strong> con la opción prudente, una clase del Reglamento 1222/2009 se pasa a la escala 2020/740 por los umbrales de resistencia a la rodadura. C1: E→D y F/G→E. C2: E→D y F/G→E. C3: F→E. </li>
+        <li>El pago a la flota es orientativo y depende del convenio firmado. El ahorro de combustible del cliente es un flujo aparte y no está aquí.</li>
+      </ul>
+    </details>
+  </section>
+</main>
+
+<script>
+"use strict";
+// ---------- Datos oficiales ----------
+// Anexo II ficha TRA010: An (kWh/km por neumático) [existente][nuevo]
+const AN = {
+  B:{A:0.0024},
+  C:{A:0.0053,B:0.0029},
+  D:{A:0.0072,B:0.0048,C:0.0019},
+  E:{A:0.0086,B:0.0062,C:0.0034,D:0.0014},
+  F:{A:0.0122,B:0.0098,C:0.0070,D:0.0050,E:0.0036},
+  G:{A:0.0158,B:0.0134,C:0.0106,D:0.0086,E:0.0072,F:0.0036}
+};
+// Anexo III ficha TRA010: km/año por tipología
+const KM = {turismo:13073, furgoneta:15815, camion:53508, autobus:46607, semirremolque:53508, remolque:53508, moto:2831, ciclomotor:1759};
+const CAT_DEF = {turismo:"C1", furgoneta:"C2", camion:"C3", autobus:"C3", semirremolque:"C3", remolque:"C3"};
+// Conversión prudente 1222/2009 -> 2020/740 (umbrales de CRR)
+const CONV = {C1:{A:"A",B:"B",C:"C",E:"D",F:"E",G:"E"}, C2:{A:"A",B:"B",C:"C",E:"D",F:"E",G:"E"}, C3:{A:"A",B:"B",C:"C",D:"D",E:"E",F:"E"}};
+const CCAA = ["Andalucía","Aragón","Asturias","Baleares","Canarias","Cantabria","Castilla-La Mancha","Castilla y León","Cataluña","Comunidad de Madrid","Comunidad Valenciana","Extremadura","Galicia","La Rioja","Murcia","Navarra","País Vasco","Ceuta","Melilla"];
+const F_RD = new Date(2023,0,26), F_FICHA = new Date(2024,6,18), F_FIN = new Date(2031,0,1);
+const MIN_MWH = 30;
+
+// ---------- Utilidades ----------
+const $ = id => document.getElementById(id);
+const nf = (x,d=2) => x.toLocaleString("es-ES",{minimumFractionDigits:d,maximumFractionDigits:d});
+const eur = x => x.toLocaleString("es-ES",{style:"currency",currency:"EUR",maximumFractionDigits:0});
+const fd = d => d ? d.toLocaleDateString("es-ES") : "";
+const norm = s => String(s ?? "").trim();
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const low = s => norm(s).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");
+function addMonths(d,n){ const x=new Date(d.getFullYear(), d.getMonth()+n, 1); const ult=new Date(x.getFullYear(), x.getMonth()+1, 0).getDate(); x.setDate(Math.min(d.getDate(), ult)); return x; }
+function addYears(d,n){ return addMonths(d, 12*n); } // 29/02/2024 + 3 años = 28/02/2027 (CC art. 5.1)
+function parseDate(v){
+  if (v instanceof Date && !isNaN(v)){ // las fechas de Excel pueden llegar desplazadas unas horas por la zona horaria
+    const x = new Date(v.getTime() + 12*3600000); return new Date(x.getFullYear(), x.getMonth(), x.getDate());
+  }
+  if (typeof v === "number" && v > 20000 && v < 80000){ // serial de Excel
+    const d = new Date(Math.round((v - 25569) * 86400000)); return new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
+  }
+  const s = norm(v); let m;
+  if ((m = s.match(/^(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{4})$/))) return valid(new Date(+m[3], +m[2]-1, +m[1]), +m[1], +m[2]);
+  if ((m = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/))) return valid(new Date(+m[1], +m[2]-1, +m[3]), +m[3], +m[2]);
+  return null;
+}
+function valid(d,day,month){ return (d.getDate()===day && d.getMonth()===month-1) ? d : null; }
+function tipoVeh(v){
+  const t = low(v);
+  if (/semi/.test(t)) return "semirremolque";
+  if (/remolq/.test(t)) return "remolque";
+  if (/ciclomot/.test(t)) return "ciclomotor";
+  if (/moto/.test(t)) return "moto";
+  if (/autocaravana|caravana|camper|agric/.test(t)) return null; // categoría dudosa (M1 especial / T): que lo decida el usuario
+  if (/autob|autocar|bus|guagua/.test(t)) return "autobus";
+  if (/furgo|n1|comercial ligero|camioneta|pick ?-?up/.test(t)) return "furgoneta";
+  if (/cami|tractor|n2|n3|rigido|articul/.test(t)) return "camion";
+  if (/turis|coche|m1|vtc|taxi/.test(t)) return "turismo";
+  return null;
+}
+function ccaaCanon(v){
+  const t = low(v).replace(/[^a-z ]/g," ").replace(/\s+/g," ").trim(); if (!t) return null;
+  const hit = CCAA.find(c => low(c).replace(/-/g," ") === t); if (hit) return hit;
+  const AL = {"madrid":"Comunidad de Madrid","valencia":"Comunidad Valenciana","comunitat valenciana":"Comunidad Valenciana","catalunya":"Cataluña",
+    "islas baleares":"Baleares","illes balears":"Baleares","principado de asturias":"Asturias","euskadi":"País Vasco","region de murcia":"Murcia",
+    "comunidad foral de navarra":"Navarra","castilla la mancha":"Castilla-La Mancha","castilla leon":"Castilla y León","islas canarias":"Canarias"};
+  return AL[t] || null;
+}
+const si = v => ["si","sí","s","1","true","x","yes"].includes(low(v));
+function clase(v){ const c = norm(v).toUpperCase(); return /^[A-G]$/.test(c) ? c : null; }
+
+// ---------- Estado ----------
+let FILAS = [], RES = [];
+CCAA.forEach(c => { const o=document.createElement("option"); o.textContent=c; if(c==="Comunidad de Madrid") o.selected=true; $("ccaa").appendChild(o); });
+$("hoy").valueAsDate = new Date();
+
+// ---------- Lectura de ficheros ----------
+function leeFichero(f){
+  const r = new FileReader();
+  r.onload = e => {
+    try{
+      const buf = new Uint8Array(e.target.result);
+      let wb;
+      if (/\.(csv|txt)$/i.test(f.name)){ // CSV: sin conversión automática (evita 03/11 -> 11 de marzo y "6,0" -> 60)
+        let txt; try{ txt = new TextDecoder("utf-8",{fatal:true}).decode(buf); }catch(_){ txt = new TextDecoder("windows-1252").decode(buf); }
+        wb = XLSX.read(txt.replace(/^﻿/,""), {type:"string", raw:true});
+      } else wb = XLSX.read(buf, {type:"array", cellDates:true});
+      const ws = wb.Sheets[wb.SheetNames[0]];
+      cargaFilas(XLSX.utils.sheet_to_json(ws, {defval:"", raw:true}), f.name);
+    }catch(err){ $("msg").innerHTML = '<span class="err">No se pudo leer el archivo: '+esc(err.message)+'</span>'; }
+  };
+  r.readAsArrayBuffer(f);
+}
+function cargaFilas(rows, nombre){
+  // normaliza cabeceras
+  FILAS = rows.map(r => { const o={}; for (const k in r) o[low(k).replace(/\s+/g,"_")] = r[k]; return o; });
+  const req = ["fecha_montaje","matricula","tipo_vehiculo","n_neumaticos","clase_retirado","clase_montado"];
+  const falta = FILAS.length ? req.filter(c => !(c in FILAS[0])) : req;
+  if (falta.length){ FILAS = []; RES = []; $("btnCsv").classList.add("hidden"); $("res").classList.add("hidden");
+    $("msg").innerHTML = '<span class="err">' + (rows.length ? 'Faltan columnas: '+falta.join(", ") : 'El archivo está vacío o no tiene filas de datos') + '</span>'; return; }
+  $("msg").textContent = `${nombre}: ${FILAS.length} filas leídas.`;
+  calcula();
+}
+
+// ---------- Cálculo ----------
+function calcula(){
+  if (!FILAS.length) return;
+  const hoy = parseDate($("hoy").value) || new Date(new Date().setHours(0,0,0,0));
+  const margen = Math.max(0, +$("margen").value || 0);
+  const convertir = $("convertir").value === "si";
+  const ccaaDef = $("ccaa").value;
+  RES = FILAS.map((r,i) => {
+    const o = {fila:i+2, motivos:[], avisos:[], estado:"VÁLIDO", mwh:0};
+    o.fecha = parseDate(r.fecha_montaje);
+    o.matricula = norm(r.matricula).toUpperCase().replace(/[\s-]/g,"");
+    o.tipo = tipoVeh(r.tipo_vehiculo);
+    o.n = Number(String(r.n_neumaticos).replace(",", "."));
+    o.cr = clase(r.clase_retirado); o.cm = clase(r.clase_montado);
+    o.cat = norm(r.categoria_neumatico).toUpperCase() || (o.tipo ? CAT_DEF[o.tipo] : "") || "";
+    o.ccaa = norm(r.comunidad) ? ccaaCanon(r.comunidad) : ccaaDef;
+    o.escala = /1222/.test(norm(r.escala_retirado)) ? "1222/2009" : "2020/740";
+    const exc = m => { o.motivos.push(m); o.estado = "EXCLUIDO"; };
+    const dud = m => { o.motivos.push(m); if (o.estado !== "EXCLUIDO") o.estado = "DUDOSO"; };
+    if (!o.fecha) exc("fecha no válida");
+    if (!o.ccaa){ o.ccaa = "¿" + norm(r.comunidad) + "?"; dud("comunidad autónoma no reconocida"); }
+    if (!o.tipo) exc("tipo de vehículo no reconocido");
+    if (!(o.n > 0) || !Number.isInteger(o.n)) exc("nº de neumáticos no válido");
+    if (!o.cr) exc("clase del retirado no válida");
+    if (!o.cm || o.cm > "E") exc("clase del montado no válida (A–E)");
+    // clase retirada efectiva
+    o.crUsada = o.cr;
+    if (o.cr && o.escala === "1222/2009" && convertir){
+      const t = CONV[o.cat]?.[o.cr];
+      if (!t) exc(`clase ${o.cr} no existe en la escala 1222/2009 para ${o.cat||"esta categoría"}`);
+      else if (t !== o.cr){ o.crUsada = t; o.avisos.push(`retirado ${o.cr} (1222/2009) → ${t} (2020/740)`); }
+    } else if (o.cr && o.escala === "2020/740" && o.cr > "E"){
+      dud(`clase ${o.cr} no existe en la escala 2020/740: se trata como 1222/2009 y se convierte`);
+      const t = CONV[o.cat]?.[o.cr]; if (t) o.crUsada = t; else exc(`clase ${o.cr} no existe para ${o.cat||"esta categoría"}`);
+    }
+    if (o.tipo === "moto" || o.tipo === "ciclomotor") exc("moto/ciclomotor: neumático sin etiqueta 2020/740");
+    if (si(r.recauchutado)) exc("recauchutado: sin etiqueta 2020/740");
+    if (si(r.contrato_publico)) exc("contrato público o concesión: excluido por la ficha");
+    if (o.fecha){
+      o.caduca = addYears(o.fecha,3); if (o.caduca > F_FIN) o.caduca = F_FIN;
+      if (o.fecha < F_RD) exc("anterior al 26/01/2023 (RD 36/2023)");
+      else if (o.fecha >= F_FIN) exc("posterior al 31/12/2030 (RD 36/2023, art. 11.5)");
+      else if (o.fecha > hoy) exc("fecha de montaje futura");
+      else if (o.caduca <= hoy) exc("CAE caducado (3 años desde el montaje)");
+      else {
+        if (o.fecha < F_FICHA) dud("anterior a la ficha TRA010 (18/07/2024)");
+        if (o.caduca <= addMonths(hoy, margen)) dud(`caduca en menos de ${margen} meses`);
+      }
+      o.anio = o.fecha.getFullYear();
+    }
+    if (o.tipo === "semirremolque" || o.tipo === "remolque") dud("remolque/semirremolque: la ficha habla de «vehículos a motor»");
+    o.an = (o.crUsada && o.cm && AN[o.crUsada]?.[o.cm]) || 0;
+    if (o.cr && o.cm && o.an === 0 && o.estado !== "EXCLUIDO") exc("sin mejora de clase");
+    o.km = o.tipo ? KM[o.tipo] : 0;
+    o.mwh = (o.an && o.n > 0 && o.km) ? o.an * o.n * o.km / 1000 : 0;
+    return o;
+  });
+  // aviso: misma matrícula con otro montaje a menos de 4 años
+  const porMat = {};
+  RES.forEach(o => { if (o.matricula && o.fecha) (porMat[o.matricula] ||= []).push(o); });
+  Object.values(porMat).forEach(l => {
+    l.sort((a,b) => a.fecha - b.fecha);
+    const vistos = new Set();
+    l.forEach((o,i) => {
+      const firma = [+o.fecha, o.n, o.cr, o.cm].join("|");
+      if (vistos.has(firma)) o.avisos.push("fila duplicada (misma matrícula, fecha, nº y clases): posible doble cómputo");
+      vistos.add(firma);
+      const ant = l.slice(0,i).reverse().find(p => +p.fecha !== +o.fecha);
+      if (ant && o.fecha < addYears(ant.fecha,4)){
+        o.avisos.push(`misma matrícula montada el ${fd(ant.fecha)}: confirmar que la medida anterior sigue activa`);
+        const av = `la matrícula vuelve a montar el ${fd(o.fecha)}`; if (!ant.avisos.includes(av)) ant.avisos.push(av);
+      }
+    });
+  });
+  pinta();
+}
+
+// ---------- Presentación ----------
+function pinta(){
+  const precio = +$("precio").value || 0, pago = +$("pago").value || 0;
+  const hoy = parseDate($("hoy").value) || new Date(new Date().setHours(0,0,0,0)), margen = +$("margen").value || 0;
+  const val = RES.filter(o => o.estado === "VÁLIDO"), dud = RES.filter(o => o.estado === "DUDOSO");
+  const sum = l => l.reduce((s,o) => s + o.mwh, 0);
+  const mV = sum(val), mD = sum(dud);
+  // expedientes
+  const exp = {};
+  RES.filter(o => o.estado !== "EXCLUIDO").forEach(o => {
+    const k = o.anio + "|" + o.ccaa;
+    const e = exp[k] ||= {anio:o.anio, ccaa:o.ccaa, mV:0, mD:0, nV:0, nD:0, veh:new Set(), cad:null};
+    if (o.estado === "VÁLIDO"){ e.mV += o.mwh; e.nV++; } else { e.mD += o.mwh; e.nD++; }
+    e.veh.add(o.matricula);
+    if (!e.cad || o.caduca < e.cad) e.cad = o.caduca;
+  });
+  const lExp = Object.values(exp).sort((a,b) => a.anio - b.anio || a.ccaa.localeCompare(b.ccaa));
+  const okExp = lExp.filter(e => e.mV >= MIN_MWH).length;
+  const urg = RES.filter(o => o.estado !== "EXCLUIDO" && o.caduca && o.caduca <= addMonths(hoy, 12)).reduce((s,o)=>s+o.mwh,0);
+  $("kpis").innerHTML = [
+    ["good", nf(mV,1)+" MWh", "Certificable (montajes válidos)"],
+    ["good", eur(mV*precio), `Valor del CAE a ${precio} €/MWh`],
+    ["good", eur(mV*pago), `Pago estimado a la flota a ${pago} €/MWh`],
+    ["warn", nf(mD,1)+" MWh", "Dudoso, pendiente de confirmar (+"+eur(mD*pago)+" para la flota)"],
+    [okExp ? "good":"bad", okExp+" de "+lExp.length, "Expedientes que llegan a 30 MWh con lo válido"],
+    [urg ? "warn":"good", nf(urg,1)+" MWh", "Caducan en los próximos 12 meses"]
+  ].map(([c,v,l]) => `<div class="kpi ${c}"><div class="v">${v}</div><div class="l">${l}</div></div>`).join("");
+  $("tExp").innerHTML = "<tr><th>Año</th><th>Comunidad</th><th class='num'>Vehículos</th><th class='num'>MWh válidos</th><th class='num'>MWh dudosos</th><th>¿Llega a 30 MWh?</th><th class='num'>Pago flota (válido)</th><th>Primera caducidad</th></tr>" +
+    lExp.map(e => {
+      const st = e.mV >= MIN_MWH ? '<span class="tag t-ok">Sí</span>' : (e.mV + e.mD >= MIN_MWH ? '<span class="tag t-dud">Solo con lo dudoso</span>' : `<span class="tag t-exc">Faltan ${nf(MIN_MWH-e.mV-e.mD,1)} MWh</span>`);
+      return `<tr><td>${e.anio}</td><td>${esc(e.ccaa)}</td><td class="num">${e.veh.size}</td><td class="num">${nf(e.mV,3)}</td><td class="num">${nf(e.mD,3)}</td><td>${st}</td><td class="num">${eur(e.mV*pago)}</td><td>${fd(e.cad)}</td></tr>`;
+    }).join("") + (lExp.length ? "" : "<tr><td colspan='8'>No hay montajes certificables.</td></tr>");
+  pintaDetalle();
+  $("res").classList.remove("hidden"); $("btnCsv").classList.remove("hidden");
+}
+function pintaDetalle(){
+  const f = $("filtro").value;
+  const cls = {"VÁLIDO":"t-ok","DUDOSO":"t-dud","EXCLUIDO":"t-exc"};
+  $("tDet").innerHTML = "<tr><th>Fila</th><th>Estado</th><th>Fecha</th><th>Matrícula</th><th>Tipo</th><th class='num'>N</th><th>Clase</th><th class='num'>An</th><th class='num'>km</th><th class='num'>MWh</th><th>Caduca</th><th>Motivo / aviso</th></tr>" +
+    RES.filter(o => !f || o.estado === f).map(o =>
+      `<tr><td>${o.fila}</td><td><span class="tag ${cls[o.estado]}">${o.estado}</span></td><td>${fd(o.fecha)}</td><td>${esc(o.matricula)}</td><td>${o.tipo||""}</td><td class="num">${isFinite(o.n)?o.n:""}</td><td>${o.cr||"?"}${o.crUsada&&o.crUsada!==o.cr?"("+o.crUsada+")":""}→${o.cm||"?"}</td><td class="num">${o.an?nf(o.an,4):"0"}</td><td class="num">${o.km?o.km.toLocaleString("es-ES"):""}</td><td class="num">${o.estado==="EXCLUIDO"?(o.mwh?`<span class="note" title="No cuenta: excluido">(${nf(o.mwh,4)})</span>`:"—"):nf(o.mwh,4)}</td><td>${fd(o.caduca)}</td><td class="motivo">${esc([...o.motivos,...o.avisos].join(" · "))}</td></tr>`
+    ).join("");
+}
+function descargaCsv(){
+  const cab = ["fila","estado","fecha_montaje","matricula","tipo_vehiculo","n_neumaticos","clase_retirado","clase_retirado_usada","clase_montado","An_kWh_km","km_anexo_III","MWh","anio","comunidad","caduca","motivos_y_avisos"];
+  const q = v => '"' + String(v ?? "").replace(/"/g,'""') + '"';
+  const filas = RES.map(o => [o.fila,o.estado,fd(o.fecha),o.matricula,o.tipo,o.n,o.cr,o.crUsada,o.cm,String(o.an).replace(".",","),o.km,o.mwh.toFixed(6).replace(".",","),o.anio,o.ccaa,fd(o.caduca),[...o.motivos,...o.avisos].join(" · ")].map(q).join(";"));
+  baja("diagnostico-retroactivo-resultado.csv", "﻿" + cab.join(";") + "\n" + filas.join("\n"));
+}
+function baja(nombre, texto){
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([texto], {type:"text/csv;charset=utf-8"}));
+  a.download = nombre; document.body.appendChild(a); a.click(); a.remove();
+}
+const PLANTILLA = "fecha_montaje;matricula;tipo_vehiculo;n_neumaticos;clase_retirado;clase_montado;escala_retirado;categoria_neumatico;recauchutado;contrato_publico;comunidad\n";
+const EJEMPLO = [
+  ["15/09/2024","1111KLM","camion",6,"D","A","","","no","no",""],
+  ["15/09/2024","2222KLM","camion",6,"D","A","","","no","no",""],
+  ["03/11/2024","3333KLM","camion",12,"E","A","","","no","no",""],
+  ["03/11/2024","3333KLM-R","semirremolque",6,"E","A","","","no","no",""],
+  ["20/02/2025","4444KLM","furgoneta",4,"C","A","","","no","no",""],
+  ["20/02/2025","5555KLM","camion",6,"D","B","","","si","no",""],
+  ["10/05/2024","6666KLM","camion",6,"D","A","","","no","no",""],
+  ["01/06/2025","7777KLM","turismo",4,"E","A","1222/2009","","no","no",""],
+  ["12/03/2026","1111KLM","camion",6,"B","A","","","no","no",""],
+  ["05/04/2025","8888KLM","autobus",6,"C","A","","","no","si",""]
+];
+$("btnPlantilla").onclick = () => baja("plantilla-historico-neumaticos.csv", "﻿" + PLANTILLA);
+$("btnEjemplo").onclick = () => {
+  const cab = PLANTILLA.trim().split(";");
+  cargaFilas(EJEMPLO.map(r => Object.fromEntries(cab.map((c,i) => [c, r[i]]))), "Datos de ejemplo");
+};
+$("btnCsv").onclick = descargaCsv;
+$("file").onchange = e => e.target.files[0] && leeFichero(e.target.files[0]);
+const drop = $("drop");
+["dragover","dragenter"].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add("over"); }));
+["dragleave","drop"].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove("over"); }));
+drop.addEventListener("drop", e => e.dataTransfer.files[0] && leeFichero(e.dataTransfer.files[0]));
+["ccaa","hoy","margen","convertir"].forEach(id => $(id).addEventListener("change", calcula));
+["precio","pago"].forEach(id => $(id).addEventListener("input", () => RES.length && pinta()));
+$("filtro").addEventListener("change", pintaDetalle);
+if (location.hash === "#ejemplo") $("btnEjemplo").click();
+</script>
+</body>
+</html>
